@@ -20,7 +20,7 @@ fn generate_points<Tz: TimeZone>(items: &[ScheduleElement<Tz>]) -> Vec<ScheduleE
         // is the next element a different height?
         if items[index].height != out.last().unwrap().height {
             // take the difference calculate the number of mins
-            let diff_delta = (items[index].height - out.last().unwrap().height) * 30;
+            let diff_delta = ((items[index].height - out.last().unwrap().height) * 30).abs();
             let delta = TimeDelta::new(diff_delta as i64, 0)
                 .expect("The difference in height is outside of reasonable range, check the csv");
             // for some reason although checked_sub and checked_add don't mutate DateTime they both take ownership
@@ -48,7 +48,7 @@ fn generate_points<Tz: TimeZone>(items: &[ScheduleElement<Tz>]) -> Vec<ScheduleE
 }
 
 fn main() {
-    let input = parser::parse_csv(Path::new("schedule.csv"));
+    let input = parser::parse_csv_alt(Path::new("schedule.csv"));
     let output = generate_points(&input);
     writer::write_csv(Path::new("output.csv"), &output);
 }

@@ -2,6 +2,7 @@ use core::panic;
 use std::path::Path;
 
 use chrono::{DateTime, Utc};
+use csv;
 #[doc = r"Parsing the input CSV"]
 use winnow::Result;
 use winnow::{
@@ -12,6 +13,22 @@ use winnow::{
 };
 
 use crate::ScheduleElement;
+
+pub fn parse_csv_alt(filename: &Path) -> Vec<ScheduleElement<Utc>> {
+    let mut csv_file = csv::ReaderBuilder::new()
+        .has_headers(false)
+        .from_path(filename)
+        .expect("Couldn't find the csv file, Have you given the correct path?");
+    let mut out = Vec::new();
+    for result in csv_file.records() {
+        let record = result.unwrap();
+        out.push(ScheduleElement {
+            timestamp: record.get(0).unwrap().parse::<DateTime<Utc>>().unwrap(),
+            height: record.get(1).unwrap()[1..].parse().unwrap(),
+        });
+    }
+    out
+}
 
 pub fn parse_csv(filename: &Path) -> Vec<ScheduleElement<Utc>> {
     let csv_file = std::fs::read_to_string(filename)

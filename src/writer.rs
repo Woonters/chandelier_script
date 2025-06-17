@@ -12,7 +12,7 @@ pub fn write_csv<Tz: TimeZone>(filename: &Path, data: &[ScheduleElement<Tz>]) {
         let datetime = elem
             .timestamp
             .to_rfc3339_opts(chrono::SecondsFormat::Secs, true);
-        out.extend_from_slice(format!("{datetime}, {0}", elem.height).as_bytes());
+        out.extend_from_slice(format!("{datetime}, {0}\n", elem.height).as_bytes());
     }
     f.write_all(&out).expect("Something went wrong writing");
 }
