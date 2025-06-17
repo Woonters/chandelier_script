@@ -1,12 +1,10 @@
 mod parser;
+mod writer;
+use std::path::Path;
+
 use chrono::DateTime;
 use chrono::TimeDelta;
 use chrono::TimeZone;
-// some function for reading the csv:
-
-// some function for turning that into instructions
-
-// some function for writing to a new one!
 
 #[derive(Clone, Debug)]
 struct ScheduleElement<Tz: TimeZone> {
@@ -50,5 +48,7 @@ fn generate_points<Tz: TimeZone>(items: &[ScheduleElement<Tz>]) -> Vec<ScheduleE
 }
 
 fn main() {
-    println!("Hello, world!");
+    let input = parser::parse_csv(Path::new("schedule.csv"));
+    let output = generate_points(&input);
+    writer::write_csv(Path::new("output.csv"), &output);
 }
